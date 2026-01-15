@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { ApiKeySection } from "./ApiKeySection";
 import { PromptSection } from "./PromptSection";
 import { AdvancedEditor } from "./AdvancedEditor";
 import { SidebarFooter } from "./SidebarFooter";
 
 interface SidebarProps {
-  apiKey: string;
-  onApiKeyChange: (key: string) => void;
   context: string;
   onContextChange: (context: string) => void;
   onGenerate: () => void;
@@ -22,8 +19,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  apiKey,
-  onApiKeyChange,
   context,
   onContextChange,
   onGenerate,
@@ -40,7 +35,6 @@ export function Sidebar({
   return (
     <aside className="w-[400px] border-r bg-white flex flex-col z-10 shadow-sm shrink-0">
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        <ApiKeySection apiKey={apiKey} onApiKeyChange={onApiKeyChange} />
         <PromptSection
           context={context}
           onContextChange={onContextChange}
