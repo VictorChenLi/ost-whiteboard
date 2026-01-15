@@ -12,6 +12,46 @@ interface TreeVisualizationProps {
 }
 
 export function TreeVisualization({ tree, transform, nodes, links }: TreeVisualizationProps) {
+  // Debug logging
+  React.useEffect(() => {
+    console.group(`[OST-DEBUG] Tree Visualization Render`);
+    console.log("Tree:", tree ? "Present" : "Null");
+    console.log("Nodes count:", nodes.length);
+    console.log("Links count:", links.length);
+    console.log("Transform:", transform);
+    
+    if (nodes.length > 0) {
+      console.log("Node positions:", nodes.map(n => ({
+        id: n.id,
+        type: n.type,
+        x: n.x,
+        y: n.y,
+        depth: n.depth,
+        childrenCount: n.children.length
+      })));
+    }
+    
+    if (links.length > 0) {
+      console.log("Links:", links.map(l => {
+        const from = tree.byId.get(l.from);
+        const to = tree.byId.get(l.to);
+        return {
+          from: l.from,
+          to: l.to,
+          fromExists: !!from,
+          toExists: !!to,
+          fromType: from?.type,
+          toType: to?.type
+        };
+      }));
+    }
+    console.groupEnd();
+  }, [tree, nodes, links, transform]);
+
+  if (!tree || nodes.length === 0) {
+    return null;
+  }
+
   return (
     <svg width="100%" height="100%" className="tree-node-appear">
       <g transform={`translate(${transform.x} ${transform.y}) scale(${transform.s})`}>
@@ -19,7 +59,10 @@ export function TreeVisualization({ tree, transform, nodes, links }: TreeVisuali
         {links.map((l) => {
           const a = tree.byId.get(l.from);
           const b = tree.byId.get(l.to);
-          if (!a || !b) return null;
+          if (!a || !b) {
+            console.warn(`[OST-DEBUG] Missing node for link: from=${l.from} (${!!a}), to=${l.to} (${!!b})`);
+            return null;
+          }
 
           const ah = computeNodeHeight(a.title, a.description);
           const midY = (a.y + ah + b.y) / 2;
